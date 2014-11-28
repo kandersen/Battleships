@@ -5,15 +5,22 @@ import qualified Graphics.UI.Threepenny as UI
 import Graphics.UI.Threepenny.Core
 import Control.Monad
 import Data.Map ((!), findMin, findMax, insert)
+import qualified Data.ByteString.Char8 as BS
 
 main :: IO ()
-main = do startGUI defaultConfig { tpPort = Just 8000 } setup
+main = do startGUI defaultConfig { tpPort = Just 80, tpAddr = Just (BS.pack $ "0.0.0.0") } setup
 
 board = frequencyMap [2,3,3,4,5] $
         initBoard Unknown #
         insert (8,1) Miss #
         insert (3,2) Miss #
-        insert (8,7) Miss
+        insert (8,7) Miss #
+        insert (8,4) Miss #
+        insert (3,2) Miss #
+        insert (5,4) Miss #
+        insert (4,5) Miss #
+        insert (3,6) Miss #
+        insert (6,3) Miss
 
 setup :: Window -> UI ()
 setup window = do
@@ -52,7 +59,7 @@ renderHeatmap board = grid $
           let
             v = normalize board ! (row, col)
             c = color $ v in 
-      (string $ "[" ++ pad (show v) ++ "]") # set UI.style
+      (string $ "[" ++ take 4 (pad (show v)) ++ "]") # set UI.style
       [("background",format c)]
     ) [0..9]
   ) [0..9]
