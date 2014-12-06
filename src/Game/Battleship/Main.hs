@@ -10,17 +10,31 @@ import qualified Data.ByteString.Char8 as BS
 main :: IO ()
 main = do startGUI defaultConfig { tpPort = Just 80, tpAddr = Just (BS.pack $ "0.0.0.0") } setup
 
-board = frequencyMap [2,3,3,4,5] $
-        initBoard Unknown #
+teamY = initBoard Unknown #
         insert (8,1) Miss #
         insert (3,2) Miss #
         insert (8,7) Miss #
         insert (8,4) Miss #
-        insert (3,2) Miss #
         insert (5,4) Miss #
         insert (4,5) Miss #
         insert (3,6) Miss #
-        insert (6,3) Miss
+        insert (6,3) Miss #
+        insert (2,7) Miss #
+        insert (2,3) Miss #
+        insert (6,7) Miss
+
+boardGP = frequencyMap [2,3,3,4,5] $
+          initBoard Unknown #
+          insert (3,6) Miss #
+          insert (5,0) Miss #
+          insert (5,1) Hit #
+          insert (5,2) Hit #
+          insert (5,3) Hit #
+          insert (5,4) Miss #
+          insert (6,1) Miss #
+          insert (7,2) Miss #
+          insert (8,1) Miss #
+          insert (4,3) Miss 
 
 setup :: Window -> UI ()
 setup window = do
@@ -28,8 +42,14 @@ setup window = do
   let
     redoLayout :: UI ()
     redoLayout = void $ do
-      layout <- renderHeatmap board
-      getBody window # set children [layout]
+      header1 <- UI.h1 #+ [string "Team Y"]
+      layout1 <- renderHeatmap (frequencyMap [2,3,3,4,5] teamY)
+      header2 <- UI.h1 #+ [string "Team Y - Aircraft Carrier Only"]
+      layout2 <- renderHeatmap (frequencyMap [5] teamY)
+      header3 <- UI.h1 #+ [string "Team GP"]
+      layout3 <- renderHeatmap boardGP
+      getBody window # set children [
+        header1, layout1, header2, layout2, header3, layout3]
 
   redoLayout
 
